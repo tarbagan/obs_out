@@ -1,0 +1,3 @@
+* text=auto
+# Preserve upstream SDK interface files and their notices byte-for-byte.
+plugins/decklink/**/decklink-sdk/** -text -whitespace
