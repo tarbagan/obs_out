@@ -32,7 +32,7 @@ class SourcePreparationTests(unittest.TestCase):
             self.assertFalse((destination / "safe.txt").exists())
             self.assertFalse((Path(tmp) / "escaped.txt").exists())
 
-    def test_rejects_archive_symlinks(self):
+    def test_skips_archive_symlinks(self):
         with tempfile.TemporaryDirectory() as tmp:
             archive = Path(tmp) / "source.zip"
             with zipfile.ZipFile(archive, "w") as z:
@@ -40,8 +40,8 @@ class SourcePreparationTests(unittest.TestCase):
                 item.create_system = 3
                 item.external_attr = 0o120777 << 16
                 z.writestr(item, "../outside")
-            with self.assertRaisesRegex(ValueError, "symlink"):
-                prepare.extract_checked(archive, Path(tmp) / "extracted")
+            prepare.extract_checked(archive, Path(tmp) / "extracted")
+            self.assertFalse((Path(tmp) / "extracted/link").exists())
 
     def test_overlay_is_repeatable_and_includes_both_modules(self):
         with tempfile.TemporaryDirectory() as tmp:

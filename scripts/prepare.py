@@ -21,13 +21,17 @@ def verify_archive(archive: Path, expected: str) -> None:
 def extract_checked(archive: Path, destination: Path) -> None:
     destination = destination.resolve()
     with zipfile.ZipFile(archive) as source:
+        regular_entries = []
         for item in source.infolist():
             target = (destination / item.filename).resolve()
             if not target.is_relative_to(destination):
                 raise ValueError(f"Unsafe archive path: {item.filename}")
             if (item.external_attr >> 16) & 0o170000 == 0o120000:
-                raise ValueError(f"Archive symlink is not allowed: {item.filename}")
-        source.extractall(destination)
+                # OBS includes macOS helper symlinks. Windows module builds do not
+                # need them; never create or follow links from an archive.
+                continue
+            regular_entries.append(item)
+        source.extractall(destination, members=regular_entries)
 
 
 def prepare(root: Path = ROOT, archive: Path | None = None) -> Path:
