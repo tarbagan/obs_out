@@ -46,5 +46,8 @@ foreach ($module in @('decklink', 'decklink-output-ui')) {
 }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'COPYING') -Destination $packageRoot -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'THIRD_PARTY.md') -Destination $packageRoot -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'plugins/decklink/LICENSE.decklink-sdk') -Destination $packageRoot -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination $packageRoot -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'docs') -Destination $packageRoot -Recurse -Force
 Write-Host "Package ready: $packageRoot"
 Write-Host 'Use a separate OBS 32.2.2 test copy. These modules replace the built-in DeckLink modules.'

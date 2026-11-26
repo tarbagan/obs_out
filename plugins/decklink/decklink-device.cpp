@@ -1,4 +1,5 @@
 #include <sstream>
+#include <obs-module.h>
 
 #include "decklink-device.hpp"
 

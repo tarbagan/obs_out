@@ -309,7 +309,7 @@ static obs_properties_t *decklink_output_properties(void *unused)
 
 	obs_properties_add_list(props, KEYER, TEXT_ENABLE_KEYER, OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_INT);
 	obs_properties_add_text(props, "sdi_diagnostics", "SDI diagnostics", OBS_TEXT_INFO);
-	obs_properties_add_button(props, "refresh_sdi", "Refresh SDI diagnostics", refresh_sdi_diagnostics);
+	obs_properties_add_button2(props, "refresh_sdi", "Refresh SDI diagnostics", refresh_sdi_diagnostics, nullptr);
 	refresh_sdi_diagnostics(props, nullptr, nullptr);
 
 	return props;
