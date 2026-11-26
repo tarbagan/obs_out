@@ -588,12 +588,20 @@ bool DeckLinkDeviceInstance::StartOutput(DeckLinkDeviceMode *mode_)
 	struct OutputRollback {
 		IDeckLinkOutput *value;
 		bool committed = false;
+		bool videoEnabled = false;
+		bool audioEnabled = false;
 		~OutputRollback()
 		{
 			if (!committed) {
-				value->SetScheduledFrameCompletionCallback(nullptr);
-				value->DisableAudioOutput();
-				value->DisableVideoOutput();
+				if (videoEnabled) {
+					value->SetScheduledFrameCompletionCallback(nullptr);
+				}
+				if (audioEnabled) {
+					value->DisableAudioOutput();
+				}
+				if (videoEnabled) {
+					value->DisableVideoOutput();
+				}
 			}
 		}
 	} rollback{output_.Get()};
@@ -603,6 +611,7 @@ bool DeckLinkDeviceInstance::StartOutput(DeckLinkDeviceMode *mode_)
 		return false;
 	}
 
+	rollback.videoEnabled = true;
 	const HRESULT audioResult = output_->EnableAudioOutput(bmdAudioSampleRate48kHz, bmdAudioSampleType16bitInteger,
 							       2, bmdAudioOutputStreamTimestamped);
 	if (audioResult != S_OK) {
@@ -610,6 +619,7 @@ bool DeckLinkDeviceInstance::StartOutput(DeckLinkDeviceMode *mode_)
 		return false;
 	}
 
+	rollback.audioEnabled = true;
 	if (!mode_->GetFrameRate(&frameDuration, &frameTimescale)) {
 		LOG(LOG_ERROR, "Failed to get frame rate");
 		return false;
