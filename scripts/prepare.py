@@ -56,6 +56,8 @@ def prepare(root: Path = ROOT, archive: Path | None = None) -> Path:
     # Only these modules are configured. No browser/websocket/capture submodules needed.
     (tree / "plugins" / "CMakeLists.txt").write_text(
         'cmake_minimum_required(VERSION 3.28...3.30)\n'
+        '# libobs is built for import libraries only; do not make upstream warnings fatal.\n'
+        'set_property(TARGET libobs PROPERTY COMPILE_WARNING_AS_ERROR OFF)\n'
         'add_subdirectory(decklink)\nadd_subdirectory(decklink-output-ui)\n', encoding="utf-8"
     )
     return tree
